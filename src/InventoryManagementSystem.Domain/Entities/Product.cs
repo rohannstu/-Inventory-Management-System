@@ -16,8 +16,7 @@ public class Product : Entity<Guid>
     public Category? Category { get; private set; } // navigation — Category already exists
 
     public Guid SupplierId { get; private set; }
-    // No Supplier navigation property yet — that entity doesn't exist.
-    // We'll add "public Supplier? Supplier { get; private set; }" once it does.
+    public Supplier? Supplier { get; private set; }
 
     private Product() { } // EF Core
 
