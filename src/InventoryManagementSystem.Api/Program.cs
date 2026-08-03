@@ -18,6 +18,13 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
+    var result = await mediator.Send(new PingCommand());
+    Console.WriteLine($"Mediator round-trip result: {result}");
+}
+
 //For testing the mediator, we can send a PingCommand and log the result.
 // using (var scope = app.Services.CreateScope())
 // {

@@ -8,6 +8,7 @@ public static class MediatorServiceCollectionExtensions
     public static IServiceCollection AddMediator(this IServiceCollection services, params Assembly[] assemblies)
     {
         services.AddScoped<IMediator, Mediator>();
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
 
         var handlerInterfaceType = typeof(IRequestHandler<,>);
 

@@ -9,12 +9,25 @@ public class Mediator(IServiceProvider serviceProvider) : IMediator
         CancellationToken cancellationToken = default)
     {
         var requestType = request.GetType();
-        var handlerType = typeof(IRequestHandler<,>).MakeGenericType(requestType, typeof(TResponse));
 
+        var handlerType = typeof(IRequestHandler<,>).MakeGenericType(requestType, typeof(TResponse));
         var handler = serviceProvider.GetRequiredService(handlerType);
 
-        // We only know the handler's shape at runtime, so `dynamic` lets us call
-        // Handle(...) on it without writing manual reflection/MethodInfo.Invoke code.
-        return await ((dynamic)handler).Handle((dynamic)request, cancellationToken);
+        // The innermost link in the chain: actually calling the real handler.
+        RequestHandlerDelegate<TResponse> pipeline = () =>
+            ((dynamic)handler).Handle((dynamic)request, cancellationToken);
+
+        var behaviorType = typeof(IPipelineBehavior<,>).MakeGenericType(requestType, typeof(TResponse));
+        var behaviors = serviceProvider.GetServices(behaviorType).Reverse().ToList();
+
+        // Wrap the pipeline in each behavior, working from innermost to outermost,
+        // so the FIRST-registered behavior ends up running FIRST at execution time.
+        foreach (var behavior in behaviors)
+        {
+            var next = pipeline;
+            pipeline = () => ((dynamic)behavior).Handle((dynamic)request, next, cancellationToken);
+        }
+
+        return await pipeline();
     }
 }
