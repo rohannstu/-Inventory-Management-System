@@ -10,13 +10,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-builder.Services.AddMediator(typeof(PingCommand).Assembly);
-
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
 
 //For testing the mediator, we can send a PingCommand and log the result.
 // using (var scope = app.Services.CreateScope())
