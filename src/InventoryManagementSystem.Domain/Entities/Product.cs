@@ -51,6 +51,11 @@ public class Product : Entity<Guid>
         Name = newName;
     }
 
+    public void UpdateDescription(string? newDescription)
+    {
+        Description = newDescription;
+    }
+
     public void ChangePrice(Money newPrice)
     {
         Price = newPrice ?? throw new ArgumentNullException(nameof(newPrice));
