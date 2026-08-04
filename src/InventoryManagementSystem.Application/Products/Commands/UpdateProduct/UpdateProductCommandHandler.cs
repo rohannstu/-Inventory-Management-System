@@ -15,11 +15,12 @@ public class UpdateProductCommandHandler(
         if (product is null)
             return false;
 
-        product.Rename(request.Name);
-        product.UpdateDescription(request.Description);
-        product.ChangePrice(Money.Create(request.Price, request.Currency));
-        product.ChangeCategory(request.CategoryId);
-        product.ChangeSupplier(request.SupplierId);
+        product.UpdateDetails(
+            name: request.Name,
+            description: request.Description,
+            price: Money.Create(request.Price, request.Currency),
+            categoryId: request.CategoryId,
+            supplierId: request.SupplierId);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -6,4 +6,5 @@ public class ProductListFilter
     public Guid? SupplierId { get; set; }
     public bool? IsActive { get; set; }
     public string? SearchTerm { get; set; }
+    public bool IncludeInactive { get; set; } = false;
 }

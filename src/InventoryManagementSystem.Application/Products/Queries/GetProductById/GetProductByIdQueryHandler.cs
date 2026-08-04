@@ -13,6 +13,9 @@ public class GetProductByIdQueryHandler(IProductRepository productRepository)
         if (product is null)
             return null;
 
+        if (!product.IsActive && !request.IncludeInactive)
+            return null;
+
         return new ProductResponse(
             Id: product.Id,
             Sku: product.Sku.Value,

@@ -69,9 +69,9 @@ public class ProductsController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetById(Guid id, [FromQuery] bool includeInactive, CancellationToken cancellationToken)
     {
-        var product = await mediator.Send(new GetProductByIdQuery(id), cancellationToken);
+        var product = await mediator.Send(new GetProductByIdQuery(id, includeInactive), cancellationToken);
 
         return product is null ? NotFound() : Ok(product);
     }

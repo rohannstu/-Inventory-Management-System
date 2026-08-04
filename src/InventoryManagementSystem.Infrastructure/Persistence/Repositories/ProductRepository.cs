@@ -34,8 +34,15 @@ public class ProductRepository(AppDbContext dbContext) : IProductRepository
         if (filter.SupplierId.HasValue)
             query = query.Where(p => p.SupplierId == filter.SupplierId.Value);
 
-        if (filter.IsActive.HasValue)
-            query = query.Where(p => p.IsActive == filter.IsActive.Value);
+        if (filter.IncludeInactive)
+        {
+            if (filter.IsActive.HasValue)
+                query = query.Where(p => p.IsActive == filter.IsActive.Value);
+        }
+        else
+        {
+            query = query.Where(p => p.IsActive);
+        }
 
         if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
             query = query.Where(p => EF.Functions.ILike(p.Name, $"%{filter.SearchTerm}%"));
