@@ -16,6 +16,7 @@ public class UpdateProductCommandHandler(
             return false;
 
         product.Rename(request.Name);
+        product.UpdateDescription(request.Description);
         product.ChangePrice(Money.Create(request.Price, request.Currency));
         product.ChangeCategory(request.CategoryId);
         product.ChangeSupplier(request.SupplierId);
