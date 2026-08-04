@@ -1,6 +1,7 @@
 using InventoryManagementSystem.Api.Contracts.Products;
 using InventoryManagementSystem.Application.Abstractions.Messaging;
 using InventoryManagementSystem.Application.Products.Commands.CreateProduct;
+using InventoryManagementSystem.Application.Products.Commands.DeleteProduct;
 using InventoryManagementSystem.Application.Products.Commands.UpdateProduct;
 using InventoryManagementSystem.Application.Products.Queries.GetProductById;
 using Microsoft.AspNetCore.Mvc;
@@ -43,6 +44,13 @@ public class ProductsController(IMediator mediator) : ControllerBase
         var updated = await mediator.Send(command, cancellationToken);
 
         return updated ? NoContent() : NotFound();
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
+    {
+        var deleted = await mediator.Send(new DeleteProductCommand(id), cancellationToken);
+        return deleted ? NoContent() : NotFound();
     }
 
     [HttpGet("{id:guid}")]
