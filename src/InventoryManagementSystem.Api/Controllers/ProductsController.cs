@@ -1,6 +1,7 @@
 using InventoryManagementSystem.Api.Contracts.Products;
 using InventoryManagementSystem.Application.Abstractions.Messaging;
 using InventoryManagementSystem.Application.Products.Commands.CreateProduct;
+using InventoryManagementSystem.Application.Products.Commands.UpdateProduct;
 using InventoryManagementSystem.Application.Products.Queries.GetProductById;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,23 @@ public class ProductsController(IMediator mediator) : ControllerBase
         var productId = await mediator.Send(command, cancellationToken);
 
         return CreatedAtAction(nameof(GetById), new { id = productId }, new { id = productId });
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> Update(Guid id, UpdateProductRequest request, CancellationToken cancellationToken)
+    {
+        var command = new UpdateProductCommand(
+            Id: id,
+            Name: request.Name,
+            Description: request.Description,
+            Price: request.Price,
+            Currency: request.Currency,
+            CategoryId: request.CategoryId,
+            SupplierId: request.SupplierId);
+
+        var updated = await mediator.Send(command, cancellationToken);
+
+        return updated ? NoContent() : NotFound();
     }
 
     [HttpGet("{id:guid}")]
