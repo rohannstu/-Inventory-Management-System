@@ -71,6 +71,20 @@ public class Product : Entity<Guid>
         SupplierId = supplierId;
     }
 
+    public void UpdateDetails(
+        string name,
+        string? description,
+        Money price,
+        Guid categoryId,
+        Guid supplierId)
+    {
+        Rename(name);
+        UpdateDescription(description);
+        ChangePrice(price);
+        ChangeCategory(categoryId);
+        ChangeSupplier(supplierId);
+    }
+
     public void IncreaseStock(int quantity)
     {
         if (quantity <= 0)
