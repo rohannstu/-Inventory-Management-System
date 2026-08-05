@@ -1,6 +1,8 @@
+using InventoryManagementSystem.Application.Abstractions.Identity;
 using InventoryManagementSystem.Application.Abstractions.Messaging;
 using InventoryManagementSystem.Application.Abstractions.Persistence;
 using InventoryManagementSystem.Application.Products.Commands.CreateProduct;
+using InventoryManagementSystem.Infrastructure.Identity;
 using InventoryManagementSystem.Infrastructure.Persistence;
 using InventoryManagementSystem.Infrastructure.Persistence.Repositories;
 using InventoryManagementSystem.Domain.Entities;
@@ -20,6 +22,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
+builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
@@ -33,6 +36,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    await RoleSeeder.SeedAsync(scope.ServiceProvider);
 }
 
 app.UseHttpsRedirection();
