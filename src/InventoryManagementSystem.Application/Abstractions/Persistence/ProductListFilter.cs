@@ -1,4 +1,4 @@
-namespace InventoryManagementSystem.Application.Products.Queries.GetProductsList;
+namespace InventoryManagementSystem.Application.Abstractions.Persistence;
 
 public class ProductListFilter
 {

@@ -4,17 +4,21 @@ using InventoryManagementSystem.Application.Abstractions.Pagination;
 using InventoryManagementSystem.Application.Products.Commands.CreateProduct;
 using InventoryManagementSystem.Application.Products.Commands.DeleteProduct;
 using InventoryManagementSystem.Application.Products.Commands.UpdateProduct;
+using InventoryManagementSystem.Application.Abstractions.Persistence;
 using InventoryManagementSystem.Application.Products.Queries.GetProductById;
 using InventoryManagementSystem.Application.Products.Queries.GetProductsList;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManagementSystem.Api.Controllers;
 
 [ApiController]
 [Route("api/products")]
+[Authorize(Policy = "RequireAnyRole")]
 public class ProductsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
+    [Authorize(Policy = "RequireManagerOrAbove")]
     public async Task<IActionResult> Create(CreateProductRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateProductCommand(
@@ -32,6 +36,7 @@ public class ProductsController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "RequireManagerOrAbove")]
     public async Task<IActionResult> Update(Guid id, UpdateProductRequest request, CancellationToken cancellationToken)
     {
         var command = new UpdateProductCommand(
@@ -49,6 +54,7 @@ public class ProductsController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "RequireAdmin")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var deleted = await mediator.Send(new DeleteProductCommand(id), cancellationToken);

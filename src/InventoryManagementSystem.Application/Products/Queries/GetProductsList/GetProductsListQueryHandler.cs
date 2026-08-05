@@ -24,17 +24,7 @@ public class GetProductsListQueryHandler : IRequestHandler<GetProductsListQuery,
             request.Pagination,
             cancellationToken);
 
-        var items = products.Select(p => new ProductResponse(
-            Id: p.Id,
-            Sku: p.Sku.Value,
-            Name: p.Name,
-            Description: p.Description,
-            Price: p.Price.Amount,
-            Currency: p.Price.Currency,
-            StockQuantity: p.StockQuantity,
-            IsActive: p.IsActive,
-            CategoryId: p.CategoryId,
-            SupplierId: p.SupplierId))
+        var items = products.Select(ProductResponse.FromEntity)
             .ToList();
 
         return new PagedResult<ProductResponse>(
