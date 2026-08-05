@@ -1,8 +1,10 @@
 using InventoryManagementSystem.Api.Contracts.StockMovements;
 using InventoryManagementSystem.Application.Abstractions.Messaging;
+using InventoryManagementSystem.Application.Abstractions.Pagination;
 using InventoryManagementSystem.Application.StockMovements.Commands.CreateStockMovement;
 using InventoryManagementSystem.Application.StockMovements.Commands.DeleteStockMovement;
 using InventoryManagementSystem.Application.StockMovements.Queries.GetStockMovementById;
+using InventoryManagementSystem.Application.StockMovements.Queries.GetStockMovementsList;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,6 +29,19 @@ public class StockMovementsController(IMediator mediator) : ControllerBase
 
         var stockMovementId = await mediator.Send(command, cancellationToken);
         return CreatedAtAction(nameof(GetById), new { id = stockMovementId }, new { id = stockMovementId });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetList(
+        [FromQuery] StockMovementListFilter filter,
+        [FromQuery] PaginationParams pagination,
+        CancellationToken cancellationToken)
+    {
+        filter ??= new StockMovementListFilter();
+        pagination ??= new PaginationParams();
+
+        var result = await mediator.Send(new GetStockMovementsListQuery(filter, pagination), cancellationToken);
+        return Ok(result);
     }
 
     [HttpDelete("{id:guid}")]

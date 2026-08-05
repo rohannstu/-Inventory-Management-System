@@ -6,11 +6,21 @@ namespace InventoryManagementSystem.Application.StockMovements.Commands.CreateSt
 
 public class CreateStockMovementCommandHandler(
     IStockMovementRepository stockMovementRepository,
+    IProductRepository productRepository,
+    IWarehouseRepository warehouseRepository,
     IUnitOfWork unitOfWork)
     : IRequestHandler<CreateStockMovementCommand, Guid>
 {
     public async Task<Guid> Handle(CreateStockMovementCommand request, CancellationToken cancellationToken)
     {
+        var product = await productRepository.GetByIdAsync(request.ProductId, cancellationToken);
+        if (product is null)
+            throw new InvalidOperationException($"Product with ID '{request.ProductId}' was not found.");
+
+        var warehouse = await warehouseRepository.GetByIdAsync(request.WarehouseId, cancellationToken);
+        if (warehouse is null)
+            throw new InvalidOperationException($"Warehouse with ID '{request.WarehouseId}' was not found.");
+
         var movement = request.Type switch
         {
             Domain.Enums.StockMovementType.StockIn => StockMovement.CreateStockIn(
