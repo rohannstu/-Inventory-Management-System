@@ -1,12 +1,14 @@
 using InventoryManagementSystem.Application.Abstractions.Messaging;
 using InventoryManagementSystem.Application.Auth.Commands.Login;
 using InventoryManagementSystem.Application.Auth.Commands.Register;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManagementSystem.Api.Controllers;
 
 [ApiController]
 [Route("api/auth")]
+[AllowAnonymous]
 public class AuthController(IMediator mediator) : ControllerBase
 {
     [HttpPost("register")]
