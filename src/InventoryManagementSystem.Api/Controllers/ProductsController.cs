@@ -1,18 +1,24 @@
 using InventoryManagementSystem.Api.Contracts.Products;
 using InventoryManagementSystem.Application.Abstractions.Messaging;
+using InventoryManagementSystem.Application.Abstractions.Pagination;
 using InventoryManagementSystem.Application.Products.Commands.CreateProduct;
 using InventoryManagementSystem.Application.Products.Commands.DeleteProduct;
 using InventoryManagementSystem.Application.Products.Commands.UpdateProduct;
+using InventoryManagementSystem.Application.Abstractions.Persistence;
 using InventoryManagementSystem.Application.Products.Queries.GetProductById;
+using InventoryManagementSystem.Application.Products.Queries.GetProductsList;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryManagementSystem.Api.Controllers;
 
 [ApiController]
 [Route("api/products")]
+[Authorize(Policy = "RequireAnyRole")]
 public class ProductsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
+    [Authorize(Policy = "RequireManagerOrAbove")]
     public async Task<IActionResult> Create(CreateProductRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateProductCommand(
@@ -30,6 +36,7 @@ public class ProductsController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = "RequireManagerOrAbove")]
     public async Task<IActionResult> Update(Guid id, UpdateProductRequest request, CancellationToken cancellationToken)
     {
         var command = new UpdateProductCommand(
@@ -47,16 +54,30 @@ public class ProductsController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "RequireAdmin")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var deleted = await mediator.Send(new DeleteProductCommand(id), cancellationToken);
         return deleted ? NoContent() : NotFound();
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
+    [HttpGet]
+    public async Task<IActionResult> GetList(
+        [FromQuery] ProductListFilter filter,
+        [FromQuery] PaginationParams pagination,
+        CancellationToken cancellationToken)
     {
-        var product = await mediator.Send(new GetProductByIdQuery(id), cancellationToken);
+        filter ??= new ProductListFilter();
+        pagination ??= new PaginationParams();
+
+        var result = await mediator.Send(new GetProductsListQuery(filter, pagination), cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetById(Guid id, [FromQuery] bool includeInactive, CancellationToken cancellationToken)
+    {
+        var product = await mediator.Send(new GetProductByIdQuery(id, includeInactive), cancellationToken);
 
         return product is null ? NotFound() : Ok(product);
     }

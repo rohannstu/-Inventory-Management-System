@@ -13,3 +13,10 @@ public enum UserRole
     Manager = 1,
     Admin = 2 // Here admin is numbered 2 because it is most important
 }
+
+public static class UserRoles
+{
+    public const string Staff = nameof(UserRole.Staff);
+    public const string Manager = nameof(UserRole.Manager);
+    public const string Admin = nameof(UserRole.Admin);
+}

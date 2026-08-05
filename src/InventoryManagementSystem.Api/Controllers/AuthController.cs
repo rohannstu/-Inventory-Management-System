@@ -1,0 +1,27 @@
+using InventoryManagementSystem.Application.Abstractions.Messaging;
+using InventoryManagementSystem.Application.Auth.Commands.Login;
+using InventoryManagementSystem.Application.Auth.Commands.Register;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace InventoryManagementSystem.Api.Controllers;
+
+[ApiController]
+[Route("api/auth")]
+[AllowAnonymous]
+public class AuthController(IMediator mediator) : ControllerBase
+{
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(RegisterCommand command, CancellationToken cancellationToken)
+    {
+        var userId = await mediator.Send(command, cancellationToken);
+        return Ok(new { id = userId });
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginCommand command, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(command, cancellationToken);
+        return Ok(result);
+    }
+}
