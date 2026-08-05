@@ -4,6 +4,7 @@ using InventoryManagementSystem.Application.Abstractions.Pagination;
 using InventoryManagementSystem.Application.Products.Commands.CreateProduct;
 using InventoryManagementSystem.Application.Products.Commands.DeleteProduct;
 using InventoryManagementSystem.Application.Products.Commands.UpdateProduct;
+using InventoryManagementSystem.Application.Abstractions.Persistence;
 using InventoryManagementSystem.Application.Products.Queries.GetProductById;
 using InventoryManagementSystem.Application.Products.Queries.GetProductsList;
 using Microsoft.AspNetCore.Mvc;

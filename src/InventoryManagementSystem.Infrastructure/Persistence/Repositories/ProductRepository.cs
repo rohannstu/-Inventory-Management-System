@@ -1,6 +1,5 @@
 using InventoryManagementSystem.Application.Abstractions.Persistence;
 using InventoryManagementSystem.Application.Abstractions.Pagination;
-using InventoryManagementSystem.Application.Products.Queries.GetProductsList;
 using InventoryManagementSystem.Domain.Entities;
 using InventoryManagementSystem.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;

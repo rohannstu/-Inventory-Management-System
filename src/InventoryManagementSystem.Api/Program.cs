@@ -3,12 +3,22 @@ using InventoryManagementSystem.Application.Abstractions.Persistence;
 using InventoryManagementSystem.Application.Products.Commands.CreateProduct;
 using InventoryManagementSystem.Infrastructure.Persistence;
 using InventoryManagementSystem.Infrastructure.Persistence.Repositories;
+using InventoryManagementSystem.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+{
+    options.Password.RequiredLength = 8;
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<AppDbContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

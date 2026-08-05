@@ -1,5 +1,4 @@
 using InventoryManagementSystem.Application.Abstractions.Pagination;
-using InventoryManagementSystem.Application.Products.Queries.GetProductsList;
 using InventoryManagementSystem.Domain.Entities;
 using System.Collections.Generic;
 

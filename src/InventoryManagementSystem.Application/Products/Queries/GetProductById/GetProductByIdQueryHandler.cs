@@ -16,16 +16,6 @@ public class GetProductByIdQueryHandler(IProductRepository productRepository)
         if (!product.IsActive && !request.IncludeInactive)
             return null;
 
-        return new ProductResponse(
-            Id: product.Id,
-            Sku: product.Sku.Value,
-            Name: product.Name,
-            Description: product.Description,
-            Price: product.Price.Amount,
-            Currency: product.Price.Currency,
-            StockQuantity: product.StockQuantity,
-            IsActive: product.IsActive,
-            CategoryId: product.CategoryId,
-            SupplierId: product.SupplierId);
+        return ProductResponse.FromEntity(product);
     }
 }
