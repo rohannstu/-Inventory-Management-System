@@ -1,4 +1,5 @@
 using InventoryManagementSystem.Application.Abstractions.Messaging;
+using InventoryManagementSystem.Application.Auth.Commands.Login;
 using InventoryManagementSystem.Application.Auth.Commands.Register;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,5 +14,12 @@ public class AuthController(IMediator mediator) : ControllerBase
     {
         var userId = await mediator.Send(command, cancellationToken);
         return Ok(new { id = userId });
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginCommand command, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(command, cancellationToken);
+        return Ok(result);
     }
 }

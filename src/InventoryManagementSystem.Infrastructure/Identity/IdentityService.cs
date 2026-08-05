@@ -18,4 +18,15 @@ public class IdentityService(UserManager<ApplicationUser> userManager) : IIdenti
         await userManager.AddToRoleAsync(user, role);
         return new CreateUserResult(true, user.Id, Array.Empty<string>());
     }
+
+    public async Task<ValidateCredentialsResult> ValidateCredentialsAsync(
+        string email, string password, CancellationToken cancellationToken)
+    {
+        var user = await userManager.FindByEmailAsync(email);
+        if (user is null || !await userManager.CheckPasswordAsync(user, password))
+            return new ValidateCredentialsResult(false, null, Array.Empty<string>());
+
+        var roles = await userManager.GetRolesAsync(user);
+        return new ValidateCredentialsResult(true, user.Id, roles);
+    }
 }
