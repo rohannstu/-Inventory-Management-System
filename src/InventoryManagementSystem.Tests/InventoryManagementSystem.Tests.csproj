@@ -21,4 +21,8 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\InventoryManagementSystem.Application\InventoryManagementSystem.Application.csproj" />
+  </ItemGroup>
+
 </Project>
