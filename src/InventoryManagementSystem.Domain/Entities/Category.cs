@@ -26,4 +26,10 @@ public class Category : Entity<Guid>
 
         Name = newName;
     }
+
+    public void UpdateDescription(string? description)
+    {
+        Description = description;
+    }
 }
+

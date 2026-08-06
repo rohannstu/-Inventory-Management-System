@@ -1,6 +1,107 @@
-@InventoryManagementSystem.Api_HostAddress = http://localhost:5096
+@host = http://localhost:5096
+@adminEmail = admin@test.com
+@adminPassword = Admin123!
+@staffEmail = staff@test.com
+@staffPassword = Staff123!
+@categoryId = PUT_REAL_CATEGORY_ID_HERE
+@supplierId = PUT_REAL_SUPPLIER_ID_HERE
+@productId = PUT_REAL_PRODUCT_ID_HERE
 
-GET {{InventoryManagementSystem.Api_HostAddress}}/weatherforecast/
+### Register Admin
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{adminPassword}}",
+  "fullName": "Test Admin",
+  "role": "Admin"
+}
+
+### Login Admin
+# Copy accessToken from this response into @adminToken below.
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "password": "{{adminPassword}}"
+}
+
+@adminToken = PASTE_ADMIN_ACCESS_TOKEN_HERE
+
+### Register Staff
+POST {{host}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{staffEmail}}",
+  "password": "{{staffPassword}}",
+  "fullName": "Test Staff",
+  "role": "Staff"
+}
+
+### Login Staff
+# Copy accessToken from this response into @staffToken below.
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{staffEmail}}",
+  "password": "{{staffPassword}}"
+}
+
+@staffToken = PASTE_STAFF_ACCESS_TOKEN_HERE
+
+### No Token: Create Product -> 401 Unauthorized
+POST {{host}}/api/products
+Content-Type: application/json
+
+{
+  "sku": "AUTH-TEST-NO-TOKEN",
+  "name": "Authorization Test Product",
+  "description": "Should be rejected without a token",
+  "price": 25.99,
+  "currency": "USD",
+  "categoryId": "{{categoryId}}",
+  "supplierId": "{{supplierId}}"
+}
+
+### Admin Token: Create Product -> 201 Created
+POST {{host}}/api/products
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "sku": "AUTH-TEST-ADMIN",
+  "name": "Authorization Test Product",
+  "description": "Should be created by Admin",
+  "price": 25.99,
+  "currency": "USD",
+  "categoryId": "{{categoryId}}",
+  "supplierId": "{{supplierId}}"
+}
+
+### Staff Token: Create Product -> 403 Forbidden
+POST {{host}}/api/products
+Authorization: Bearer {{staffToken}}
+Content-Type: application/json
+
+{
+  "sku": "AUTH-TEST-STAFF",
+  "name": "Authorization Test Product",
+  "description": "Should be rejected for Staff",
+  "price": 25.99,
+  "currency": "USD",
+  "categoryId": "{{categoryId}}",
+  "supplierId": "{{supplierId}}"
+}
+
+### Staff Token: Get Products -> 200 OK
+GET {{host}}/api/products
+Authorization: Bearer {{staffToken}}
 Accept: application/json
 
-###
+### Staff Token: Delete Product -> 403 Forbidden
+DELETE {{host}}/api/products/{{productId}}
+Authorization: Bearer {{staffToken}}
